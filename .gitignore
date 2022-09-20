@@ -1,0 +1,5 @@
+.DS_Store
+*SNAPSHOT.tgz
+Chart.lock
+package.sh
+git-conventional-commits.json
