@@ -14,7 +14,7 @@ spec:
   suspend: {{ default false .suspend }}
   schedule: {{ .schedule | quote }}
   successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       backoffLimit: 2
