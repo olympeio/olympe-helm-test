@@ -2,4 +2,5 @@
 *SNAPSHOT.tgz
 Chart.lock
 package.sh
+.deploy
 git-conventional-commits.json
