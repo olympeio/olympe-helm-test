@@ -57,6 +57,10 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Push release to s3
+        env:
+          AWS_REGION: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           helm plugin install https://github.com/hypnoglow/helm-s3.git
           helm repo add olympe-test s3://olympe-helm-repository/stable/olympe-test
