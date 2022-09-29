@@ -38,6 +38,7 @@ jobs:
         uses: nuuday/github-changelog-action@v1.0.0
         with:
           next_version: "${{ env.release }}"
+          config_dir: charts/olympe/.chglog
       
       - name: Push Changelog
         uses: EndBug/add-and-commit@v9
