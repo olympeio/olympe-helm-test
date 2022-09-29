@@ -2,7 +2,7 @@ style: gitlab
 template: CHANGELOG.tpl.md
 info:
   title: CHANGELOG
-  repository_url: https://gitlab.caas.olympe.io/devops-group/helm/composer
+  repository_url: https://github.com/olympeio/olympe-helm-test.git
 options:
   commits:
    filters:
