@@ -32,7 +32,7 @@ jobs:
 
       - name: Get release version
         run: |
-          echo "release=$(yq -r .version Chart.yaml)" >> $GITHUB_ENV
+          echo "release=$(yq -r .version charts/olympe/Chart.yaml)" >> $GITHUB_ENV
 
       - uses: craicoverflow/install-git-chglog@v1.0.0
 
