@@ -60,5 +60,5 @@ jobs:
         run: |
           helm repo add olympe-test s3://olympe-helm-repository/stable/olympe-test
           helm plugin install https://github.com/hypnoglow/helm-s3.git
-          helm s3 push olympe-${{ env.release }}.tgz olympe
+          helm s3 push olympe-${{ env.release }}.tgz olympe-test
 
