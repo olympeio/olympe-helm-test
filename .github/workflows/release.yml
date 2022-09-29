@@ -37,7 +37,7 @@ jobs:
       - name: Generate Changelog
         uses: nuuday/github-changelog-action@v1.0.0
         with:
-          next_version: "${{ env.release }}"
+          next_version: "1.0.2"
           config_dir: charts/olympe/.chglog
       
       - name: Push Changelog
