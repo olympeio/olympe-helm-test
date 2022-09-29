@@ -2,8 +2,11 @@
 ## [Unreleased]
 
 
-<a name="1.0.11"></a>
-## [1.0.11] - 2022-09-29
+<a name="1.0.12"></a>
+## [1.0.12] - 2022-09-29
+
+<a name="olympe-1.0.11"></a>
+## [olympe-1.0.11] - 2022-09-29
 
 <a name="olympe-1.0.10"></a>
 ## [olympe-1.0.10] - 2022-09-29
@@ -47,8 +50,9 @@
 <a name="olympe-1.0.0-SNAPSHOT"></a>
 ## olympe-1.0.0-SNAPSHOT - 2022-09-20
 
-[Unreleased]: https://github.com/olympeio/olympe-helm-test.git/compare/1.0.11...HEAD
-[1.0.11]: https://github.com/olympeio/olympe-helm-test.git/compare/olympe-1.0.10...1.0.11
+[Unreleased]: https://github.com/olympeio/olympe-helm-test.git/compare/1.0.12...HEAD
+[1.0.12]: https://github.com/olympeio/olympe-helm-test.git/compare/olympe-1.0.11...1.0.12
+[olympe-1.0.11]: https://github.com/olympeio/olympe-helm-test.git/compare/olympe-1.0.10...olympe-1.0.11
 [olympe-1.0.10]: https://github.com/olympeio/olympe-helm-test.git/compare/olympe-1.0.9...olympe-1.0.10
 [olympe-1.0.9]: https://github.com/olympeio/olympe-helm-test.git/compare/olympe-1.0.8...olympe-1.0.9
 [olympe-1.0.8]: https://github.com/olympeio/olympe-helm-test.git/compare/olympe-1.0.7...olympe-1.0.8
