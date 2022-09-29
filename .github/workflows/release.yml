@@ -30,8 +30,13 @@ jobs:
           name: 'yq'
           version: 'v4.27.5'
 
+      - name: Get release version
+        run: |
+          echo "release=$(yq -r .version Chart.yaml)" >> $GITHUB_ENV
+
+      - uses: actions/install-git-chglog@v1
+
       - name: Generate Changelog
-        uses: actions/install-git-chglog@v1
         run: git-chglog --config charts/olympe/.chglog/config.yml --next-tag $(yq -r .version charts/olympe/Chart.yaml) -o charts/olympe/CHANGELOG.md
 
       - name: Generate Changelog
