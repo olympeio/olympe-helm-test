@@ -35,7 +35,7 @@ jobs:
           echo "release=$(yq -r .version Chart.yaml)" >> $GITHUB_ENV
 
       - name: Generate Changelog
-        uses: nuuday/github-changelog-action@v1.0.0
+        uses: nuuday/github-changelog-action@v1.0.1
         with:
           next_version: "1.0.2"
           config_dir: "charts/olympe/.chglog"
