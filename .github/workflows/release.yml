@@ -38,17 +38,11 @@ jobs:
 
       - name: Generate Changelog
         run: git-chglog --config charts/olympe/.chglog/config.yml --next-tag $(yq -r .version charts/olympe/Chart.yaml) -o charts/olympe/CHANGELOG.md
-
-      - name: Generate Changelog
-        uses: nuuday/github-changelog-action@v1.0.1
-        with:
-          next_version: "1.0.2"
-          config_dir: "charts/olympe/.chglog"
       
       - name: Push Changelog
         uses: EndBug/add-and-commit@v9
         with:
-          add: 'CHANGELOG.md'
+          add: 'charts/olympe/CHANGELOG.md'
           message: '[skip ci] update changelog for ${release}'
           push: true
 
