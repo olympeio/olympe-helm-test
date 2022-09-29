@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "release=$(yq -r .version Chart.yaml)" >> $GITHUB_ENV
 
-      - uses: actions/install-git-chglog@v1
+      - uses: craicoverflow/install-git-chglog@v1.0.0
 
       - name: Generate Changelog
         run: git-chglog --config charts/olympe/.chglog/config.yml --next-tag $(yq -r .version charts/olympe/Chart.yaml) -o charts/olympe/CHANGELOG.md
