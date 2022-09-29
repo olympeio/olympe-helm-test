@@ -43,7 +43,7 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: 'charts/olympe/CHANGELOG.md'
-          message: "[skip ci] update changelog for ${release}"
+          message: "[skip ci] update changelog for ${{ env.release }}"
           push: true
 
       - name: Install Helm
