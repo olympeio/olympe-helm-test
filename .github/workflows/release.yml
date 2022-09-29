@@ -22,15 +22,22 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          wget https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64.tar.gz -O - |\
-          tar xz && mv yq_linux_amd64 /usr/bin/yq
-          release=$(yq -r .version Chart.yaml)
+      
+      - name: Add yq
+        uses: supplypike/setup-bin@v1
+        with:
+          uri: 'https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64.tar.gz'
+          name: 'yq'
+          version: 'v4.27.5'
 
+      - name: Get release version
+        run: |
+          echo "release=$(yq -r .version Chart.yaml)" >> $GITHUB_ENV
 
       - name: Generate Changelog
         uses: nuuday/github-changelog-action@v1.0.0
         with:
-          next_version: $release
+          next_version: "${{ env.release }}"
       
       - name: Push Changelog
         uses: EndBug/add-and-commit@v9
@@ -38,7 +45,6 @@ jobs:
           add: 'CHANGELOG.md'
           message: '[skip ci] update changelog for ${release}'
           push: true
-
 
       - name: Install Helm
         uses: azure/setup-helm@v1
