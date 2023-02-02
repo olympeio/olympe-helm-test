@@ -32,7 +32,7 @@ spec:
         - name: frontend
           securityContext:
             {{- toYaml .Values.frontend.securityContext | nindent 12 }}
-          image: {{ printf "%s" .Values.frontend.image | quote }}
+          image: "{{ .Values.frontend.image.registry }}/{{ .Values.frontend.image.repository }}:{{ default .Chart.AppVersion .Values.frontend.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 80

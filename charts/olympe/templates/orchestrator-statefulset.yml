@@ -43,22 +43,36 @@ spec:
         - name: orchestrator
           securityContext:
             {{- toYaml .Values.orchestrator.securityContext | nindent 12 }}
-          image: {{ printf "%s" .Values.orchestrator.image | quote }}
+          image: "{{ .Values.orchestrator.image.registry }}/{{ .Values.orchestrator.image.repository }}:{{ default .Chart.AppVersion .Values.orchestrator.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           tty: true
           ports:
             - containerPort: 8080
+            {{- if .Values.orchestrator.haEnabled }}
+            - containerPort: 5701
+            {{- end }}
             - containerPort: 8081
+          
+          {{ $version := .Values.orchestrator.image.tag | semver }}
+          {{ $ver_number := print $version.Major "." $version.Minor "." $version.Patch }}
+          {{- if or (and (semverCompare ">=6.5.0" $ver_number) (eq .Values.orchestrator.image.repository "orchestrator")) (and (semverCompare ">=2.3.0" $ver_number) (eq .Values.orchestrator.image.repository "olympe-orchestrator")) }}
+          livenessProbe:
+            {{- toYaml .Values.orchestrator.livenessProbe | nindent 12 }}
+          startupProbe:
+            {{- toYaml .Values.orchestrator.startupProbe | nindent 12 }}
+          {{- else }}
           livenessProbe:
             httpGet:
               path: /
               port: 8080
             failureThreshold: 10
-          readinessProbe:
+          startupProbe:
             httpGet:
               path: /
               port: 8080
             failureThreshold: 10
+          {{- end }}
+          
           resources:
             {{- toYaml .Values.orchestrator.resources | nindent 12 }}
           envFrom:

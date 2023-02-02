@@ -33,9 +33,10 @@ spec:
     {{- end }}
       serviceAccountName: {{ $accountName }}
       securityContext:
-        runAsUser: 0
+        runAsUser: 1000
       containers:
         - name: {{ .name }}
+          workingDir: /home/node/app/
           securityContext:
             allowPrivilegeEscalation: false
           image: {{ default $v.serviceAppsImage .image }}
@@ -47,12 +48,7 @@ spec:
             {{ end }}
           {{ end }}
           resources:
-            requests:
-              memory: {{ default "100Mi" (((.resources).requests).memory) }}
-              cpu: {{ default "50m" (((.resources).requests).cpu) }}
-            limits:
-              memory: {{ default "200Mi" (((.resources).limits).memory) }}
-              cpu: {{ default "100m" (((.resources).limits).cpu) }}
+            {{- toYaml .resources | nindent 12 }}
           env:
             - name: ORCHESTRATOR_HOST
               value: orchestrator
@@ -65,7 +61,7 @@ spec:
               value: {{ . }}
             {{- end }}
             - name: JS_SCRIPT
-              value: /nodes/main.js
+              value: /home/node/app/main.js
           {{- if .env }}
             {{- toYaml .env | nindent 12 }}
           {{ end }}
@@ -83,19 +79,39 @@ spec:
             {{- end }}
             {{- end }}
           volumeMounts:
-          - name: node
-            mountPath: /nodes
-            subPath: {{ .name }}
-          {{- with .volumeMounts }}
-            {{- toYaml . | nindent 10 }}
-          {{- end }}
+            - mountPath: /test
+              name: test-volume
+            {{ if .volumeMounts }}
+              {{- toYaml .volumeMounts | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            {{- if .enableDefaultProbe }}
+            httpGet:
+              path: /readiness
+              port: 3141
+            timeoutSeconds: 5
+            initialDelaySeconds: 5
+            {{- else }}
+            {{- toYaml .livenessProbe | nindent 12 }}
+            {{- end }}
+          readinessProbe:
+            {{- toYaml .readinessProbe | nindent 12 }}
+          startupProbe:
+            {{- if .enableDefaultProbe }}
+            httpGet:
+              path: /readiness
+              port: 3141
+            timeoutSeconds: 5
+            initialDelaySeconds: 5
+            {{- else }}
+            {{- toYaml .startupProbe | nindent 12 }}
+            {{- end }}
       volumes:
-        - name: node
-          persistentVolumeClaim:
-            claimName: {{ printf "%s-nodes" (include "olympe.fullname" $) | trunc 63 | trimSuffix "-" }}
-    {{- with .volumes }}
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        - name: test-volume
+          emptyDir: {}
+        {{ if .volumes }}
+        {{- toYaml .volumes | nindent 8 }}
+        {{- end }}
     {{- if .nodeSelector }}
     {{- with .nodeSelector }}
       nodeSelector:

@@ -63,4 +63,15 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
-
+{{/*
+Looks if there's an existing secret and reuse its password. If not it generates
+new password and use it.
+*/}}
+{{- define "olympe.drawPassword" -}}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace (printf "%s-orchestrator-secret" (include "olympe.fullname" .) | trunc 63 | trimSuffix "-")) -}}
+  {{- if $secret -}}
+    {{-  index $secret "data" "DRAW_PASSWORD" -}}
+  {{- else -}}
+    {{- (randAlphaNum 20) | b64enc | quote -}}
+  {{- end -}}
+{{- end -}}

@@ -2,7 +2,7 @@
 {{ $labelsSelector := (include "olympe.selectorLabels" .) }}
 {{- if eq .Values.enabled true }}
 {{- range .Values.snapshooters }}
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ printf "%s-snapshooter-%s" (include "olympe.fullname" $) .name | trunc 63 | trimSuffix "-" }}
@@ -37,6 +37,11 @@ spec:
               limits:
                 memory: {{ if .resources }}{{ if .resources.limits -}} {{ default "1000Mi" .resources.limits.memory }} {{- else -}} "200Mi" {{- end }}{{- else -}} "200Mi" {{- end }}
                 cpu: {{ if .resources }}{{ if .resources.limits -}} {{ default "200m" .resources.limits.cpu }} {{- else -}} "200m" {{- end }}{{- else -}} "200m" {{- end }}
+            envFrom:
+              - configMapRef:
+                  name: {{ printf "%s-orchestrator-config" (include "olympe.fullname" $) | trunc 63 | trimSuffix "-" }}
+              - secretRef:
+                  name: {{ printf "%s-orchestrator-secret" (include "olympe.fullname" $) | trunc 63 | trimSuffix "-" }}
             env:
               - name: CONFIG_FILE
                 value: "/config/config.json"

@@ -3,8 +3,8 @@ appRepository: olympeio/olympe-composer
 
 neo4j:
   enabled: true
-  image: olympeio/neo4j-procedure
-  imageTag: 1.9.8
+  image: olympeio/olympe-database
+  imageTag: 2.3.1
   plugins: []
   fullnameOverride: neo4j
   neo4jPassword: olympe
@@ -14,7 +14,7 @@ neo4j:
     initContainers:
       - name: copy-plugins
         # -- Init container which is used to copy the plugins. This should be the set as <neo4j.image>:<neo4j.imageTag>
-        image: olympeio/neo4j-procedure:1.9.8
+        image: olympeio/olympe-database:2.3.1
         command: ["/bin/sh", "-c", "cp /var/lib/neo4j/plugins/* /plugins"]
         volumeMounts:
           - name: plugins
@@ -53,8 +53,8 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-# -- *Currently not implemented* Olympe admin password. This parameter is passed to resetdb command.
-drawPassword: olympe1234
+# -- Olympe admin password. This parameter is passed to resetdb command.
+drawPassword:
 
 # -- Define if a project is enabled or not. If not, replicas will be set to 0 but data will be kept
 enabled: true
@@ -66,7 +66,9 @@ frontend:
   # -- Number of frontend replicas
   replicas: 1
   # -- frontend image
-  image: olympeio/draw:latest
+  image:
+    registry: olympeio
+    repository: olympe-frontend
   # -- frontend environment variables
   env: {}
   resources:
@@ -100,13 +102,15 @@ businessData:
 
 olympeTools:
   action: resetdb
-  image: olympeio/resource-feeder:stable
+  image: olympeio/olympe-tools:latest
 
 orchestrator:
   # -- Number of orchestrator replicas
   replicas: 1
   # -- Orchestrator image
-  image: olympeio/orchestrator:6.3.0
+  image:
+    repository: olympeio
+    registry: olympe-orchestrator
   # -- Orchestrator image
   nfsFixerImage: 470752198308.dkr.ecr.eu-central-1.amazonaws.com/alpine
   # -- Orchestrator cluster type. Can be "none", "infinispan" or "hazelcast"
@@ -119,7 +123,6 @@ orchestrator:
   configMapEnv:
     PERMISSION_CHECK_ENABLED: "false"
     WAIT_FOR_NEO4J: "120"
-    CLUSTERING_ENABLED: "false"
     RABBITMQ_CLIENT_PREFETCH_SIZE: 200
     JAVA_PROCESS_XMX: 1g
     ALLOWED_WS_ORIGINS: "|.*"
@@ -137,9 +140,9 @@ orchestrator:
     # -- database name of the project (defaults to project name without hyphen)
     dbName:
     # -- database username of the project (defaults to project name without hyphen)
-    dbUsername:
+    dbUsername: neo4j
     # -- database user password of the project (defaults to a 12 characters randomly generated string)
-    dbUserPassword:
+    dbUserPassword: olympe
     # -- Toggle resetdb execution at project creation only
     resetDB: true
     # -- Toggle createdb execution at project creation only
@@ -147,10 +150,10 @@ orchestrator:
   rabbitmq:
     host: rabbitmq
     port: 5672
-    username:
-    orchestratorUsername:
-    password:
-    orchestratorPassword:
+    username: guest
+    orchestratorUsername: guest
+    password: guest
+    orchestratorPassword: guest
   resources:
     requests:
       # -- Orchestrator memory request. See [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers)
@@ -176,10 +179,20 @@ orchestrator:
     allowPrivilegeEscalation: false
   prometheus:
     enabled: false
+  livenessProbe:
+    httpGet:
+      path: /readiness
+      port: 8082
+    failureThreshold: 10
+  startupProbe:
+    httpGet:
+      path: /readiness
+      port: 8082
+    failureThreshold: 10
 
 # -- Service Apps configuration. Please see the example folders for more details
 serviceApps: []
-serviceAppsImage: node:14.20.0
+serviceAppsImage: node:14.21.2-slim
 
 serviceAccount:
   # -- Specifies whether a service account should be created
@@ -235,28 +248,3 @@ vaultTemplate: false
 nodes:
   dataVolume:
     storageClassName: efs-storage-class
-
-# -- Sandman configuration
-sandman:
-  additionalParams: []
-  enabled: false
-  image: registry.caas.olympe.io/infra/docker/sandman:3.16.1
-  imagePullSecrets:
-  - name: gitlab-docker-cfg
-  envFrom:
-  - secretRef:
-      name: sandman-secret
-  wakeUpSchedule:
-    minute: "0"
-    hour: "6"
-    monthDay: "*"
-    month: "*"
-    weekDay: "1-5"
-  sleepSchedule:
-    minute: "0"
-    hour: "18"
-    monthDay: "*"
-    month: "*"
-    weekDay: "1-5"
-  securityContext:
-    allowPrivilegeEscalation: false
