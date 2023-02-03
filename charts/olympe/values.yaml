@@ -3,7 +3,7 @@ appRepository: olympeio/olympe-composer
 neo4j:
   enabled: true
   image: olympeio/olympe-database
-  imageTag: v4.0.9
+  imageTag: v4.0.11
   plugins: []
   fullnameOverride: neo4j
   neo4jPassword: olympe
